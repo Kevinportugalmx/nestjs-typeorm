@@ -1,0 +1,11 @@
+Utilice el comando migration:create para crear una nueva migración si desea realizar cambios en su modelo de datos.
+    -La sintaxis del comando es la siguiente:
+    typeorm migration:create -n <nombre-de-migracion>
+    Donde <nombre-de-migracion> es el nombre de la migración que se desea crear.
+
+Utilice el comando migration:generate para generar el archivo de migración a partir de las diferencias detectadas entre el modelo de datos y la base de datos actual.
+    -La sintaxis del comando es la siguiente:
+    typeorm migration:generate -n <nombre-de-migracion>
+    Donde <nombre-de-migracion> es el nombre de la migración que se desea generar.
+
+Utilice el comando migration:run para aplicar las migraciones pendientes en la base de datos.
