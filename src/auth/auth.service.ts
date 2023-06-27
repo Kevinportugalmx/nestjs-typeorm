@@ -3,7 +3,7 @@ import { config } from '../config'
 import { JwtService } from '@nestjs/jwt'
 import { TokenData } from '../types'
 import { hashWithAppKey } from '../utils'
-import { Repository } from 'typeorm'
+import { DataSource, Repository } from 'typeorm'
 import { User } from '../database/entities/user.entity'
 import { Profile } from '../database/entities/profile.entity'
 import { InjectRepository } from '@nestjs/typeorm'
@@ -21,7 +21,7 @@ export class AuthService {
     private readonly userRepository: Repository<User>,
     @InjectRepository(Profile)
     private readonly profileRepository: Repository<Profile>,
-
+    private dataSource: DataSource,
     private jwtService: JwtService
   ) {}
 
@@ -29,11 +29,41 @@ export class AuthService {
     user: Partial<User>,
     profile: Partial<Profile>
   ): Promise<User> {
-    await this.profileRepository.save(profile)
-    return await this.userRepository.save({
-      ...user,
-      profile,
+    const userFound = await this.userRepository.findOneBy({ email: user.email })
+    if (userFound) {
+      throw new HttpException('USER_ALREADY_EXISTS', 409)
+    }
+    await this.dataSource.transaction(async (manager) => {
+      await manager.save(Profile, profile)
+      await manager.save(User, {
+        ...user,
+        profile,
+      })
     })
+
+    return await this.userRepository.findOneBy({ email: user.email })
+  }
+
+  async delete(id: number): Promise<boolean> {
+    const userFound = await this.userRepository.findOne({
+      where: { id },
+      relations: ['profile'],
+    })
+    console.log({ userFound })
+    await this.dataSource.transaction(async (manager) => {
+      await manager.delete(User, id)
+      await manager.delete(Profile, userFound.profile.id)
+    })
+    return true
+  }
+
+  async update(id: number, user: Partial<User>): Promise<User> {
+    const userFound = await this.userRepository.findOneBy({ id })
+    if (!userFound) {
+      throw new HttpException('USER_NOT_FOUND', 404)
+    }
+    await this.userRepository.update(id, user)
+    return await this.userRepository.findOneBy({ id })
   }
 
   sign(payload: ITokenPayload) {

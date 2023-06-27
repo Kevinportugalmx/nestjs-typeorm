@@ -25,20 +25,28 @@ export class AuthController {
 
   @Post('/register')
   async register() {
-    await this.authService.register(
-      {
-        name: 'Kevin',
-        email: 'kevinportugalmx@gmail.com',
-        password: hashWithAppKey('password'),
-        role: Roles.ADMIN,
-        status: UserStatus.ACTIVE,
-      },
-      {
-        firstName: 'Kevin',
-        lastName: 'Portugal',
-        phone: '6682524909',
-      }
-    )
+    // await this.authService.register(
+    //   {
+    //     email: 'kevinportugalmx@gmail.com',
+    //     password: hashWithAppKey('password'),
+    //     role: Roles.ADMIN,
+    //     status: UserStatus.ACTIVE,
+    //   },
+    //   {
+    //     firstName: 'Kevin',
+    //     lastName: 'Portugal',
+    //     username: 'Maniac',
+    //     phone: '6682524909',
+    //   }
+    // )
+
+    // await this.authService.update(4, {
+    //   email: 'kevin_pp_1998@gmail.com',
+    //   role: Roles.ADMIN,
+    //   status: UserStatus.ACTIVE,
+    // })
+    await this.authService.delete(4)
+
     return { success: true }
   }
 }

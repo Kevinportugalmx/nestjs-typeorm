@@ -5,6 +5,9 @@ import {
   OneToOne,
   JoinColumn,
   CreateDateColumn,
+  OneToMany,
+  ManyToMany,
+  ManyToOne,
 } from 'typeorm'
 import { Profile } from './profile.entity'
 
@@ -23,10 +26,7 @@ export class User {
   @PrimaryGeneratedColumn()
   id: number
 
-  @Column()
-  name: string
-
-  @Column()
+  @Column({ unique: true })
   email: string
 
   @Column()
@@ -41,7 +41,11 @@ export class User {
   @CreateDateColumn()
   createdAt: Date
 
-  @OneToOne(() => Profile)
+  @OneToOne(() => Profile) // PK TO PK
   @JoinColumn()
   profile: Profile
+
+  //@OneToMany() //PK TO FK
+  //@ManyToMany() //FK TO FK
+  //@ManyToOne() // FK TO PK
 }
