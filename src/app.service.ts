@@ -6,3 +6,5 @@ export class AppService {
     return 'Hello World!'
   }
 }
+
+console.log('Usted a sido hackeado por el inhackeable xd')
